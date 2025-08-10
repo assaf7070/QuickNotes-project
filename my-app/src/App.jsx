@@ -16,11 +16,15 @@ export default function App() {
     setNotes((prev) => [newNote, ...prev]);
   };
 
+  const deleteNote = (id) => {
+    setNotes((prev) => prev.filter((n) => n.id !== id));
+  };
+
   return (
     <main className="container">
       <h1>QuickNotes</h1>
       <NoteForm onAdd={addNote} />
-      <NotesGrid notes={notes} />
+      <NotesGrid notes={notes} onDelete={deleteNote} />
     </main>
   );
 }
