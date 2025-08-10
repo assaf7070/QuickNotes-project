@@ -14,11 +14,32 @@ export default function App() {
 
     const newNote = {
       id: crypto.randomUUID(),
-      title: t || null, 
+      title: t || null,
       body: b,
       createdAt: Date.now(),
     };
     setNotes((prev) => [newNote, ...prev]);
+  };
+
+  const updateNote = (id, { title, body }) => {
+    const b = body.trim();
+    const t = title?.trim();
+    if (!b) return;
+
+    const now = Date.now();
+
+    setNotes((prev) =>
+      prev.map((n) =>
+        n.id === id ? { ...n, title: t || null, body: b, updatedAt: now } : n
+      )
+    );
+
+    // keep modal state in sync if it's open
+    setActiveNote((prev) =>
+      prev && prev.id === id
+        ? { ...prev, title: t || null, body: b, updatedAt: now }
+        : prev
+    );
   };
 
   const deleteNote = (id) => {
@@ -31,9 +52,17 @@ export default function App() {
   return (
     <main className="container">
       <h1>QuickNotes</h1>
-      <NoteForm onAdd={addNote} />
+
+      <NoteForm onSubmit={addNote} submitLabel="Add" />
+
       <NotesGrid notes={notes} onDelete={deleteNote} onOpen={openNote} />
-      <NoteModal note={activeNote} isOpen={!!activeNote} onRequestClose={closeNote} />
+
+      <NoteModal
+        note={activeNote}
+        isOpen={!!activeNote}
+        onRequestClose={closeNote}
+        onUpdate={updateNote}
+      />
     </main>
   );
 }

@@ -1,14 +1,28 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-export default function NoteForm({ onAdd }) {
-  const [title, setTitle] = useState("");
-  const [body, setBody] = useState("");
+export default function NoteForm({
+  onSubmit, // called with { title, body }
+  initialTitle = "",
+  initialBody = "",
+  submitLabel = "Add",
+}) {
+  const [title, setTitle] = useState(initialTitle);
+  const [body, setBody] = useState(initialBody);
+
+  // Keep in sync if props change (e.g., when opening another note in the modal)
+  useEffect(() => {
+    setTitle(initialTitle);
+    setBody(initialBody);
+  }, [initialTitle, initialBody]);
 
   const submit = (e) => {
     e.preventDefault();
-    onAdd({ title, body });
-    setTitle("");
-    setBody("");
+    onSubmit({ title, body });
+    // For "Add" we reset; for "Update" we don't.
+    if (submitLabel === "Add") {
+      setTitle("");
+      setBody("");
+    }
   };
 
   const canSubmit = body.trim().length > 0;
@@ -30,7 +44,7 @@ export default function NoteForm({ onAdd }) {
         onChange={(e) => setBody(e.target.value)}
       />
       <button className="btn" type="submit" disabled={!canSubmit}>
-        Add
+        {submitLabel}
       </button>
     </form>
   );
