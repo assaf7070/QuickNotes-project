@@ -91,5 +91,24 @@ h1 {
   cursor: pointer;
   color: #475569;
 }
-.icon-btn:hover { color: #111827; }
+.icon-btn:hover {
+  color: #111827;
+}
 
+.title-input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  outline: none;
+}
+.title-input:focus {
+  border-color: #64748b;
+}
+
+.card .title {
+  margin: 6px 0 2px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0f172a;
+}

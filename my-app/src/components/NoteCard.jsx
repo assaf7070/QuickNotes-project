@@ -17,6 +17,7 @@ export default function NoteCard({ note, onDelete }) {
           ×
         </button>
       </div>
+      {note.title && <h3 className="title">{note.title}</h3>}
       <p className="body">{note.body}</p>
     </article>
   );

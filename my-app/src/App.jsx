@@ -5,12 +5,15 @@ import NotesGrid from "./components/NotesGrid.jsx";
 export default function App() {
   const [notes, setNotes] = useState([]);
 
-  const addNote = (body) => {
-    const trimmed = body.trim();
-    if (!trimmed) return;
+  const addNote = ({ title, body }) => {
+    const b = body.trim();
+    const t = title?.trim();
+    if (!b) return;
+
     const newNote = {
       id: crypto.randomUUID(),
-      body: trimmed,
+      title: t || null, 
+      body: b,
       createdAt: Date.now(),
     };
     setNotes((prev) => [newNote, ...prev]);

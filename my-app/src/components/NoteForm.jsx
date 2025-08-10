@@ -1,11 +1,13 @@
 import { useState } from "react";
 
 export default function NoteForm({ onAdd }) {
+  const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
 
   const submit = (e) => {
     e.preventDefault();
-    onAdd(body);
+    onAdd({ title, body });
+    setTitle("");
     setBody("");
   };
 
@@ -13,6 +15,13 @@ export default function NoteForm({ onAdd }) {
 
   return (
     <form className="note-form" onSubmit={submit}>
+      <input
+        className="title-input"
+        type="text"
+        placeholder="Title (optional)"
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+      />
       <textarea
         className="note-input"
         rows={5}
