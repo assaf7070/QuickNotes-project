@@ -112,3 +112,14 @@ h1 {
   font-weight: 700;
   color: #0f172a;
 }
+
+/* was: .icon-btn { ... }  -> better: */
+.card .icon-btn {
+  border: none;
+  background: transparent;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  color: #475569;
+}
+

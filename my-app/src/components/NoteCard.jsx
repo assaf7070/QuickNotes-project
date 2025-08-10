@@ -1,6 +1,6 @@
 import { format } from "date-fns";
 
-export default function NoteCard({ note, onDelete }) {
+export default function NoteCard({ note, onDelete , onOpen}) {
   const handleDelete = () => {
     if (confirm("Are you sure you want to delete this note?")) {
       onDelete(note.id);
@@ -10,7 +10,15 @@ export default function NoteCard({ note, onDelete }) {
   const created = format(note.createdAt, "MMM do h:mm a"); // e.g. "Sep 1st 10:06 AM"
 
   return (
-    <article className="card">
+    <article
+      className="card clickable"
+      onClick={() => onOpen(note)}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") onOpen(note);
+      }}
+    >
       <div className="top-row">
         <div className="meta">{created}</div>
         <button className="icon-btn" aria-label="Delete" onClick={handleDelete}>
