@@ -1,23 +1,22 @@
 import { useEffect, useMemo, useState } from "react";
-import { Modal, Stack, Title, TextInput, Textarea, Text, Group } from "@mantine/core";
-
+import { Modal, Stack, Title, TextInput, Textarea, Text, Group, Select } from "@mantine/core";
+import { CATEGORIES, DEFAULT_CATEGORY } from "../constants/categories.js";
 
 export default function NoteModal({ note, isOpen, onRequestClose, onUpdate }) {
-  // Local drafts (persist while modal is open)
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [isEditingBody, setIsEditingBody] = useState(false);
   const [titleDraft, setTitleDraft] = useState("");
   const [bodyDraft, setBodyDraft] = useState("");
+  const [categoryDraft, setCategoryDraft] = useState(DEFAULT_CATEGORY);
 
-  // Reset drafts when a different note opens
   useEffect(() => {
     setIsEditingTitle(false);
     setIsEditingBody(false);
     setTitleDraft(note?.title || "");
     setBodyDraft(note?.body || "");
+    setCategoryDraft(note?.category || DEFAULT_CATEGORY);
   }, [note]);
 
-  // Grow editor roughly to current body size (capped)
   const minRows = useMemo(() => {
     const lines = (bodyDraft || "").split("\n").length;
     return Math.min(Math.max(lines, 4), 18);
@@ -27,8 +26,8 @@ export default function NoteModal({ note, isOpen, onRequestClose, onUpdate }) {
     if (!note) return;
     const t = titleDraft.trim();
     const b = bodyDraft.trim();
-    if (!b) return; // don't allow empty body
-    onUpdate(note.id, { title: t, body: b });
+    if (!b) return;
+    onUpdate(note.id, { title: t, body: b, category: categoryDraft });
     onRequestClose();
   };
 
@@ -42,7 +41,6 @@ export default function NoteModal({ note, isOpen, onRequestClose, onUpdate }) {
       overlayProps={{ opacity: 0.35, blur: 2 }}
       radius="md"
       padding="md"
-      // Title area: inline edit or preview of the draft
       title={
         isEditingTitle ? (
           <TextInput
@@ -60,10 +58,8 @@ export default function NoteModal({ note, isOpen, onRequestClose, onUpdate }) {
             order={3}
             className="click-to-edit"
             onClick={() => setIsEditingTitle(true)}
-            title="Click to edit title"
           >
-            {titleDraft || "Untitled note"}{" "}
-            {/* preview the draft, not saved value */}
+            {titleDraft || "Untitled note"}
           </Title>
         )
       }
@@ -79,9 +75,8 @@ export default function NoteModal({ note, isOpen, onRequestClose, onUpdate }) {
               minRows={minRows}
               maxRows={24}
               onKeyDown={(e) => {
-                if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+                if ((e.ctrlKey || e.metaKey) && e.key === "Enter")
                   handleUpdate();
-                }
                 if (e.key === "Escape") setIsEditingBody(false);
               }}
               onBlur={() => setIsEditingBody(false)}
@@ -93,11 +88,20 @@ export default function NoteModal({ note, isOpen, onRequestClose, onUpdate }) {
               title="Click to edit body"
               onClick={() => setIsEditingBody(true)}
             >
-              {bodyDraft} {/* preview the draft while not editing */}
+              {bodyDraft}
             </Text>
           )}
 
-          {/* Actions – same design as Add button */}
+          {/* Category select (always visible in modal) */}
+          <Select
+            label="Category"
+            data={CATEGORIES.map(({ value, label }) => ({ value, label }))}
+            value={categoryDraft}
+            onChange={(v) => setCategoryDraft(v)}
+            allowDeselect={false}
+            comboboxProps={{ withinPortal: true }}
+          />
+
           <Group justify="flex-end">
             <button
               type="button"

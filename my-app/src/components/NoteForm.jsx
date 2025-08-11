@@ -1,27 +1,32 @@
 import { useEffect, useState } from "react";
+import { Select } from "@mantine/core";
+import { CATEGORIES, DEFAULT_CATEGORY } from "../constants/categories.js";
 
 export default function NoteForm({
-  onSubmit, // called with { title, body }
+  onSubmit,
   initialTitle = "",
   initialBody = "",
+  initialCategory = DEFAULT_CATEGORY,
   submitLabel = "Add",
 }) {
   const [title, setTitle] = useState(initialTitle);
   const [body, setBody] = useState(initialBody);
+  const [category, setCategory] = useState(initialCategory);
 
-  // Keep in sync if props change (e.g., when opening another note in the modal)
+  // Sync when props change (used in edit mode too)
   useEffect(() => {
     setTitle(initialTitle);
     setBody(initialBody);
-  }, [initialTitle, initialBody]);
+    setCategory(initialCategory);
+  }, [initialTitle, initialBody, initialCategory]);
 
   const submit = (e) => {
     e.preventDefault();
-    onSubmit({ title, body });
-    // For "Add" we reset; for "Update" we don't.
+    onSubmit({ title, body, category });
     if (submitLabel === "Add") {
       setTitle("");
       setBody("");
+      setCategory(DEFAULT_CATEGORY);
     }
   };
 
@@ -36,6 +41,7 @@ export default function NoteForm({
         value={title}
         onChange={(e) => setTitle(e.target.value)}
       />
+
       <textarea
         className="note-input"
         rows={5}
@@ -43,6 +49,17 @@ export default function NoteForm({
         value={body}
         onChange={(e) => setBody(e.target.value)}
       />
+
+      {/* Category selector */}
+      <Select
+        data={CATEGORIES.map(({ value, label }) => ({ value, label }))}
+        value={category}
+        onChange={(v) => setCategory(v)}
+        label="Category"
+        allowDeselect={false}
+        comboboxProps={{ withinPortal: true }}
+      />
+
       <button className="btn" type="submit" disabled={!canSubmit}>
         {submitLabel}
       </button>
