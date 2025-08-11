@@ -13,7 +13,6 @@ export default function NoteForm({
   const [body, setBody] = useState(initialBody);
   const [category, setCategory] = useState(initialCategory);
 
-  // Sync when props change (used in edit mode too)
   useEffect(() => {
     setTitle(initialTitle);
     setBody(initialBody);

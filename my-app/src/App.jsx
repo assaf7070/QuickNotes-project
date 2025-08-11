@@ -2,16 +2,27 @@ import { useState } from "react";
 import NoteForm from "./components/NoteForm.jsx";
 import NotesGrid from "./components/NotesGrid.jsx";
 import NoteModal from "./components/NoteModal.jsx";
+import FiltersBar from "./components/FiltersBar.jsx";
+import { useNoteFilters } from "./hooks/useNoteFilters.js";
 import { useNotes } from "./hooks/useNotes.js";
 
 export default function App() {
   const { notes, addNote, updateNote, deleteNote } = useNotes();
   const [activeNote, setActiveNote] = useState(null);
 
+  const {
+    query,
+    setQuery,
+    selectedCats,
+    setSelectedCats,
+    filteredNotes,
+    clearFilters,
+    hasActiveFilters,
+  } = useNoteFilters(notes);
+
   const openNote = (note) => setActiveNote(note);
   const closeNote = () => setActiveNote(null);
 
-  // Close the modal if the currently open note is deleted
   const handleDelete = (id) => {
     deleteNote(id);
     setActiveNote((prev) => (prev && prev.id === id ? null : prev));
@@ -21,12 +32,28 @@ export default function App() {
     <main className="container">
       <h1>QuickNotes</h1>
 
-      {/* Add mode */}
       <NoteForm onSubmit={addNote} submitLabel="Add" />
 
-      <NotesGrid notes={notes} onDelete={handleDelete} onOpen={openNote} />
+      <FiltersBar
+        query={query}
+        onQueryChange={setQuery}
+        selectedCategories={selectedCats}
+        onSelectedCategoriesChange={setSelectedCats}
+        onClear={clearFilters}
+        hasActive={hasActiveFilters}
+      />
 
-      {/* Edit mode in modal */}
+      <NotesGrid
+        notes={filteredNotes}
+        onDelete={handleDelete}
+        onOpen={openNote}
+        emptyText={
+          notes.length === 0
+            ? "No notes yet. Add your first one 👇"
+            : "No notes match your filters."
+        }
+      />
+
       <NoteModal
         note={activeNote}
         isOpen={!!activeNote}
