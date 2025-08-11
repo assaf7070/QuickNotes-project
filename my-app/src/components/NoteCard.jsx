@@ -1,4 +1,3 @@
-// src/components/NoteCard.jsx
 import { format } from "date-fns";
 
 export default function NoteCard({ note, onDelete, onOpen }) {
